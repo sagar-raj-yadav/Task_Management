@@ -65,7 +65,12 @@ function Login() {
                 <div>
                     <h2 className="signup-link">Don't have an account? <Link to='/signup'>Signup</Link></h2>
                 </div>
+                <div className='last'>
+                    <p>Email: sagarrajyadav2002@gmail.com</p>
+                    <p>Password: 123456</p>
+                </div>
             </div>
+
         </div>
     )
 }
