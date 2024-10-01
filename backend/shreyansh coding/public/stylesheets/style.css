@@ -1,0 +1,70 @@
+body {
+    color: #000;
+  }
+  
+  .form {
+    padding: 20px 0 0  40%;
+  }
+  
+  .title-input {
+    display: block;
+    width: 50%;
+    font-size: 20px;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1.25rem;
+    outline: none;
+    background-color: #18181b;
+    color: #fff;
+  }
+  
+  .description-input {
+    display: block;
+    width: 50%;
+    margin-top: 0.5rem;
+    padding: 1.5rem 1.25rem;
+    resize: none;
+    background-color: #18181b;
+    color: #fff;
+  }
+  
+  .submit-btn {
+    background-color: #2563eb;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.375rem;
+    margin-top: 0.5rem;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .tasks {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding-top: 2.5rem;
+    
+  }
+  
+  .task {
+    width: 18rem;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    background-color: #393a3a;
+    color: rgb(245, 238, 242);
+  }
+  
+  .task-title {
+    
+    font-size: 1.875rem;
+    letter-spacing: -0.025em;
+  }
+  
+  .read-more {
+    color: #3b82f6;
+    display: inline-block;
+    margin-top: 0.75rem;
+    text-decoration: none;
+  }
+  .text-no {
+    color: #f10707; /* This is the hex value for the Tailwind color zinc-600 */
+}

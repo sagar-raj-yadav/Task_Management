@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Document</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <div>
+    <div class="form">
+      <form action="/create" method="post">
+        <input name="title" class="title-input" type="text" placeholder="enter title"/>
+        <textarea name="details" class="description-input" placeholder="enter description"></textarea>
+        <input class="submit-btn" type="submit" value="Add Task"/>
+      </form>
+    </div>
+
+    <div class="tasks">
+      <% if (files.length > 0) { %>
+        <% files.forEach(function(val) { %>
+
+          <div class="task">
+            <h1 class="task-title"><%= val %></h1>
+            <a href="#" class="read-more">read more</a>
+          </div>
+
+
+
+        <% }); %>
+      <% } else { %>
+        <h3 class="text-no">No tasks yet...</h3>
+      <% } %>
+    </div>
+  </div>
+
+  <script src="/javascripts/script.js"></script>
+</body>
+</html>
