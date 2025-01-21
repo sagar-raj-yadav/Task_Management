@@ -26,28 +26,22 @@ router.post('/addtask', async (req, res) => {
 
 
 
-// Route 2: Fetch all tasks with pagination
 router.get('/fetchalltask', async (req, res) => {
-    const { status, page = 1, limit = 2 } = req.query; 
+    const { status } = req.query;  
     const query = status ? { status } : {};  
 
     try {
-        const tasks = await Task.find(query)
-            .skip((page - 1) * limit)  
-            .limit(parseInt(limit));
-
-        const totalTasks = await Task.countDocuments(query);  
+        const tasks = await Task.find(query);  // Fetch all tasks without pagination
 
         res.json({
-            tasks,
-            totalPages: Math.ceil(totalTasks / limit),  
-            currentPage: parseInt(page),
+            tasks,  // Return all tasks based on the query
         });
     } catch (error) {
         console.error('Error fetching tasks:', error);
         res.status(500).send('Server Error');
     }
 });
+
 
 
 
