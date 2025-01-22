@@ -3,15 +3,13 @@ const router = express.Router();
 import Task from '../models/task.js';
 
 router.post('/addtask', async (req, res) => {
-    const { title, description, dueDate, priority, assignedUser, status } = req.body;
+    const { title, dueDate, priority, status } = req.body;
 
     const formattedDate = new Date(dueDate).toLocaleDateString('en-US');
 
     try {
         const newTask = new Task({
             title,
-            description,
-            assignedUser,
             status, 
             dueDate: formattedDate, 
             priority,
@@ -47,7 +45,7 @@ router.get('/fetchalltask', async (req, res) => {
 
 // Route 3: Update task
 router.put("/updatetask/:id", async (req, res) => {
-    const { title, description, user, dueDate, priority, status } = req.body; 
+    const { title, user, dueDate, priority, status } = req.body; 
     const { id } = req.params;
 
     try {
@@ -61,8 +59,7 @@ router.put("/updatetask/:id", async (req, res) => {
             id,
             { 
                 $set: { 
-                    title, 
-                    description, 
+                    title,  
                     user,  
                     dueDate, 
                     status,  
