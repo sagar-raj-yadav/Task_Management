@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TaskSection from './TaskSection';
 import axios from 'axios';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const TaskBoard = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -24,10 +24,6 @@ const TaskBoard = () => {
         }
     }, [selectedStatus, currentPage]);
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" />;
-    }
-
     const fetchTasks = async (page = 1) => {
         try {
             const queryStatus = selectedStatus === 'All' ? '' : `status=${selectedStatus}`;
@@ -40,7 +36,7 @@ const TaskBoard = () => {
         }
     };
 
-    const addTask = (newTask) => {
+    const addTask = () => {
         fetchTasks(currentPage);
     };
 
@@ -71,6 +67,18 @@ const TaskBoard = () => {
 
     return (
         <>
+            {/* Top navbar with Login and Signup (Always Visible) */}
+            <div >
+                {!isAuthenticated && (
+                    <div className="authNavbar">
+                        <button onClick={() => navigate('/login')}>Login</button>
+                        <button onClick={() => navigate('/signup')}>Signup</button>
+                    </div>
+                )}
+                {isAuthenticated && <button className='logout' onClick={handleLogout}>Logout</button>}
+            </div>
+
+            {/* Task Board (Always Visible) */}
             <div className="filters">
                 <input
                     type="text"
@@ -97,7 +105,6 @@ const TaskBoard = () => {
                     <option value="User C">User C</option>
                 </select>
             </div>
-            <button className='logout' onClick={handleLogout}>Logout</button>
 
             <div className="task-board">
                 <TaskSection title="ToDo" tasks={tasksByStatus['ToDo']} addTask={addTask} />
