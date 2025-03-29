@@ -6,18 +6,9 @@ import Signup from './loginsignup/Signup';
 import './App.css';
 
 const App = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            setIsAuthenticated(true);
-        }
-    }, []);
+    
 
-    const handleLogin = () => {
-        setIsAuthenticated(true);
-    };
 
     const router = createBrowserRouter([
         {
@@ -26,7 +17,7 @@ const App = () => {
         },
         {
             path: "/login",
-            element: <Login onLogin={handleLogin} />,
+            element: <Login  />,
         },
         {
             path: "/",
