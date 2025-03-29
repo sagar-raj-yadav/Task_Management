@@ -1,17 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import TaskSection from './TaskSection';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const TaskBoard = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState('All');  // Selected status
+    const [selectedStatus, setSelectedStatus] = useState('All');
     const [selectedPriority, setSelectedPriority] = useState('All');
     const [assignedUser, setAssignedUser] = useState('All');
     const [tasks, setTasks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit] = useState(10);  
+    const [limit] = useState(10);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsAuthenticated(true);
+            fetchTasks(currentPage);
+        }
+    }, [selectedStatus, currentPage]);
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" />;
+    }
 
     const fetchTasks = async (page = 1) => {
         try {
@@ -25,16 +40,10 @@ const TaskBoard = () => {
         }
     };
 
-    // Fetch tasks on component mount and when filters or page changes
-    useEffect(() => {
-        fetchTasks(currentPage);  // Fetch tasks initially and when filters or page change
-    }, [selectedStatus, currentPage]);
-
     const addTask = (newTask) => {
         fetchTasks(currentPage);
     };
 
-    // Filter tasks based on search, priority, and assigned user
     const filteredTasks = tasks.filter(task => {
         const matchesSearch = task.title ? task.title.toLowerCase().includes(searchTerm.toLowerCase()) : false;
         const matchesPriority = selectedPriority === 'All' || task.priority === selectedPriority;
@@ -42,27 +51,23 @@ const TaskBoard = () => {
         return matchesSearch && matchesPriority && matchesUser;
     });
 
-    // Group tasks by status
     const tasksByStatus = {
         'ToDo': filteredTasks.filter(task => task.status === 'ToDo'),
         'InProgress': filteredTasks.filter(task => task.status === 'InProgress'),
         'Completed': filteredTasks.filter(task => task.status === 'Completed'),
     };
 
-    // Pagination controls
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
         }
     };
 
-    //logout
-    const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem('token');
+        setIsAuthenticated(false);
         navigate("/login");
     };
-    
 
     return (
         <>
@@ -92,7 +97,7 @@ const TaskBoard = () => {
                     <option value="User C">User C</option>
                 </select>
             </div>
-            <button className='logout' onClick={handleLogout}>logout</button>
+            <button className='logout' onClick={handleLogout}>Logout</button>
 
             <div className="task-board">
                 <TaskSection title="ToDo" tasks={tasksByStatus['ToDo']} addTask={addTask} />
@@ -115,7 +120,6 @@ const TaskBoard = () => {
                     Next
                 </button>
             </div>
-
         </>
     );
 };
