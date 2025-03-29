@@ -8,15 +8,15 @@ const taskSchema = new Schema({
     },
     description: {
         type: String,
-        required: false
+        required: true
     },
     assignedUser: {
         type: String,
-        required: false
+        required: true
     },
     status: {
         type: String,
-        required: false
+        required: true
     },
     priority: {
         type: String,
