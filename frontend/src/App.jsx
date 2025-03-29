@@ -30,7 +30,7 @@ const App = () => {
         },
         {
             path: "/",
-            element: isAuthenticated ? <TaskBoard /> : <Navigate to="/login" />,
+            element:  <TaskBoard />  />,
         },
     ]);
 
