@@ -5,6 +5,14 @@
   gap: 20px; 
 }
 
+.authNavbar {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start; /* Buttons ko right side align karne ke liye */
+  padding: 10px;
+}
+
+
 .task-section {
   flex: 1; 
   max-height: auto; 
