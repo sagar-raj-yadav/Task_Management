@@ -30,7 +30,7 @@ const App = () => {
         },
         {
             path: "/",
-            element:  <TaskBoard />  />,
+            element:  <TaskBoard />  ,
         },
     ]);
 
