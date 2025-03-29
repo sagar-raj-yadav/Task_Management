@@ -2,50 +2,55 @@ import express from 'express';
 const router = express.Router();
 import Task from '../models/task.js';
 
+// ✅ Route 1: Add a New Task
 router.post('/addtask', async (req, res) => {
-    const { title, dueDate, priority, status } = req.body;
-
-    const formattedDate = new Date(dueDate).toLocaleDateString('en-US');
+    const { title, description, assignedUser, dueDate, priority, status } = req.body;
 
     try {
+        if (!title || !description || !assignedUser || !dueDate) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        const formattedDate = new Date(dueDate).toLocaleDateString('en-US');
+
         const newTask = new Task({
             title,
+            description,  // ✅ Fixed: Added missing field
+            assignedUser, // ✅ Fixed: Added missing field
             status, 
             dueDate: formattedDate, 
             priority,
         });
 
         await newTask.save();
-        res.status(201).json(newTask); 
+        res.status(201).json(newTask);
     } catch (error) {
+        console.error("Error creating task:", error);
         res.status(400).json({ message: 'Error creating task', error });
     }
 });
 
-
-
+// ✅ Route 2: Fetch All Tasks (with optional filtering)
 router.get('/fetchalltask', async (req, res) => {
-    const { status } = req.query;  
-    const query = status ? { status } : {};  
+    const { status, assignedUser, priority } = req.query;
+    
+    const query = {};
+    if (status) query.status = status;
+    if (assignedUser) query.assignedUser = assignedUser;
+    if (priority) query.priority = priority;
 
     try {
-        const tasks = await Task.find(query);  // Fetch all tasks without pagination
-
-        res.json({
-            tasks,  // Return all tasks based on the query
-        });
+        const tasks = await Task.find(query);
+        res.json({ tasks });
     } catch (error) {
         console.error('Error fetching tasks:', error);
-        res.status(500).send('Server Error');
+        res.status(500).json({ error: 'Server Error' });
     }
 });
 
-
-
-
-// Route 3: Update task
+// ✅ Route 3: Update Task
 router.put("/updatetask/:id", async (req, res) => {
-    const { title, user, dueDate, priority, status } = req.body; 
+    const { title, description, assignedUser, dueDate, priority, status } = req.body;
     const { id } = req.params;
 
     try {
@@ -57,28 +62,28 @@ router.put("/updatetask/:id", async (req, res) => {
 
         task = await Task.findByIdAndUpdate(
             id,
-            { 
-                $set: { 
-                    title,  
-                    user,  
-                    dueDate, 
-                    status,  
+            {
+                $set: {
+                    title,
+                    description,  // ✅ Fixed: Added missing field
+                    assignedUser, // ✅ Fixed: Changed 'user' to 'assignedUser'
+                    dueDate,
+                    status,
                     priority,
-                    updatedAt: Date.now() 
-                } 
+                    updatedAt: Date.now(),
+                }
             },
-            { new: true, runValidators: true } 
+            { new: true, runValidators: true }
         );
 
         res.json({ task, success: "Task updated successfully" });
     } catch (error) {
-        console.error(error);
+        console.error("Error updating task:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
 
-
-// Route 4: Delete task
+// ✅ Route 4: Delete Task
 router.delete("/deletetask/:id", async (req, res) => {
     try {
         let task = await Task.findById(req.params.id);
@@ -87,7 +92,7 @@ router.delete("/deletetask/:id", async (req, res) => {
             return res.status(404).json({ error: "Task not found" });
         }
 
-               await Task.findByIdAndDelete(req.params.id);
+        await Task.findByIdAndDelete(req.params.id);
 
         res.json({ success: "Task has been deleted", task });
     } catch (error) {
@@ -95,6 +100,5 @@ router.delete("/deletetask/:id", async (req, res) => {
         res.status(500).json({ error: "Internal server error", details: error.message });
     }
 });
-
 
 export default router;
