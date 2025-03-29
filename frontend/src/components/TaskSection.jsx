@@ -3,49 +3,44 @@ import TaskCard from './TaskCard';
 import TaskForm from './TaskForm';
 import axios from 'axios';
 
-const TaskSection = ({ title, tasks, addTask }) => {
+const TaskSection = ({ title, tasks, addTask, removeTask }) => {
     const [showForm, setShowForm] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
 
     const handleAddTask = async (task) => {
-        if (editingTask) {
-            // Update existing task
-            try {
-                const response = await axios.put(`https://task-management-5ms8.onrender.com/api/task/updatetask/${editingTask._id}`, task);
-                addTask({ ...response.data, status: title });
-            } catch (error) {
-                console.error('Error updating task:', error);
-            }
-        } else {
-            // Add new task
-            try {
-                const response = await axios.post('https://task-management-5ms8.onrender.com/api/task/addtask', {
-                    ...task,
+        try {
+            let response;
+            if (editingTask) {
+                response = await axios.put(
+                    `https://task-management-5ms8.onrender.com/api/task/updatetask/${editingTask._id}`,
+                    task
+                );
+            } else {
+                response = await axios.post("https://task-management-5ms8.onrender.com/api/task/addtask", {
+                    title: task.title,
+                    description: task.description,
+                    dueDate: task.dueDate,
                     status: title,
+                    assignedUser: task.assignedUser,
+                    priority: task.priority,
                 });
-                addTask(response.data);
-            } catch (error) {
-                console.error('Error adding task:', error);
             }
+    
+            addTask(response.data.task);
+            setShowForm(false);
+            setEditingTask(null);
+        } catch (error) {
+            console.error("Error adding/updating task:", error);
         }
-        setShowForm(false);
-        setEditingTask(null);
     };
-
-    const handleEditTask = (task) => {
-        setEditingTask(task);
-        setShowForm(true);
-    };
+    
 
     const handleDeleteTask = async (taskId) => {
         try {
-            const response = await axios.delete(`https://task-management-5ms8.onrender.com/api/task/deletetask/${taskId}`);
-            if (response.data.success) {
-                // Optionally update your state to remove the task
-                addTask({ _id: taskId, delete: true });  // Remove the task from state
-            }
+            await axios.delete(`https://task-management-5ms8.onrender.com/api/task/deletetask/${taskId}`);
+            removeTask(taskId);  // UI update ke liye removeTask call karo
         } catch (error) {
-            console.error('Error deleting task:', error); // Detailed error logging
+            console.error("Error deleting task:", error);
         }
     };
 
@@ -56,23 +51,14 @@ const TaskSection = ({ title, tasks, addTask }) => {
                 <TaskCard
                     key={task._id}
                     task={task}
-                    onEdit={() => handleEditTask(task)}
+                    onEdit={() => { setEditingTask(task); setShowForm(true); }}
                     onDelete={() => handleDeleteTask(task._id)}
                 />
             ))}
-                {(provided) => (
-                    <div {...provided.droppableProps} ref={provided.innerRef} className="task-list">
-                        {provided.placeholder}
-                    </div>
-                )}
             {showForm ? (
                 <div className='modal-overlay'>
                     <div className='modal-content'>
-                        <TaskForm
-                            addTask={handleAddTask}
-                            onCancel={() => setShowForm(false)}
-                            existingTask={editingTask}
-                        />
+                        <TaskForm addTask={handleAddTask} onCancel={() => setShowForm(false)} existingTask={editingTask} />
                     </div>
                 </div>
             ) : (
@@ -83,3 +69,5 @@ const TaskSection = ({ title, tasks, addTask }) => {
 };
 
 export default TaskSection;
+
+
