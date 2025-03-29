@@ -30,6 +30,7 @@ const TaskForm = ({ addTask, onCancel, existingTask }) => {
         addTask(task);
         setTask({ title: '', description: '', dueDate: '', status: 'ToDo', assignedUser: 'User A', priority: 'Low' });
     };
+    
 
     return (
         <form onSubmit={handleSubmit} className="task-form">
